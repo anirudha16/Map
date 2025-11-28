@@ -103,7 +103,7 @@ const LocationPanel = ({ location, onClose }) => {
                   <div className="review-rating">Rating: {review.rating}/5</div>
                   <div className="review-author">
                     <strong>User:</strong>{" "}
-                    {review.user_name || review.user_email || "anonymous_user"}
+                    {review.user_name || "Unknown User"}
                   </div>
                   <p>{review.comment}</p>
                   <span className="review-meta">

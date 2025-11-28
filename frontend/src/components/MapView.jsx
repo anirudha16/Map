@@ -308,6 +308,22 @@ const MapController = ({ onMapReady }) => {
   return null;
 };
 
+const MIN_FETCH_ZOOM = 6; // CHANGED FOR BOUNDING BOX FETCHING
+
+function filterByZoom(places, zoom) {
+  if (zoom < 8) return [];
+
+  if (zoom >= 8 && zoom <= 10) {
+    return places.filter(() => Math.random() < 0.12);
+  }
+
+  if (zoom >= 11 && zoom <= 13) {
+    return places.filter(() => Math.random() < 0.45);
+  }
+
+  return places;
+}
+
 const MapView = ({
   locations = [],
   onMarkerClick = () => {},
@@ -331,7 +347,7 @@ const MapView = ({
   };
 
   useEffect(() => {
-    if (!mapReady || !mapRef.current) return;
+    if (!mapReady || !mapRef.current) return; // CHANGED FOR BOUNDING BOX FETCHING
 
     console.log("🌍 Map ready → Bounding Box search enabled");
 
@@ -342,7 +358,13 @@ const MapView = ({
       markersLayerRef.current = L.layerGroup().addTo(map);
     }
 
-    async function loadPlacesInsideBox() {
+    async function loadPlacesInsideBox() { // CHANGED FOR BOUNDING BOX FETCHING
+      const currentZoom = map.getZoom(); // CHANGED FOR BOUNDING BOX FETCHING
+      if (currentZoom < MIN_FETCH_ZOOM) { // CHANGED FOR BOUNDING BOX FETCHING
+        markersLayerRef.current.clearLayers(); // CHANGED FOR BOUNDING BOX FETCHING
+        return; // CHANGED FOR BOUNDING BOX FETCHING
+      } // CHANGED FOR BOUNDING BOX FETCHING
+
       const bounds = map.getBounds();
       const ne = bounds.getNorthEast();
       const sw = bounds.getSouthWest();
@@ -355,11 +377,12 @@ const MapView = ({
       console.log("📦 Bounding Box:", { minLon, minLat, maxLon, maxLat });
 
       try {
-        const places = await getPlacesInBBox(minLon, minLat, maxLon, maxLat);
+        const fetchedData = await getPlacesInBBox(minLon, minLat, maxLon, maxLat); // CHANGED FOR BOUNDING BOX FETCHING
+        const places = filterByZoom(fetchedData, currentZoom);
         console.log(`📌 Fetched ${places.length} places in visible region`);
 
         // Clear current markers
-        markersLayerRef.current.clearLayers();
+        markersLayerRef.current.clearLayers(); // CHANGED FOR BOUNDING BOX FETCHING
 
         // Add new markers
         places.forEach((p) => {
@@ -385,15 +408,13 @@ const MapView = ({
     }
 
     // Load when map moves or zooms
-    map.on("moveend", loadPlacesInsideBox);
-    map.on("zoomend", loadPlacesInsideBox);
+    map.on("moveend", loadPlacesInsideBox); // CHANGED FOR BOUNDING BOX FETCHING
 
     // Initial fetch
-    loadPlacesInsideBox();
+    loadPlacesInsideBox(); // CHANGED FOR BOUNDING BOX FETCHING
 
     return () => {
-      map.off("moveend", loadPlacesInsideBox);
-      map.off("zoomend", loadPlacesInsideBox);
+      map.off("moveend", loadPlacesInsideBox); // CHANGED FOR BOUNDING BOX FETCHING
     };
   }, [mapReady, onMarkerClick]);
 

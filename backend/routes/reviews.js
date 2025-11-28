@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const locationId = req.params.locationId;
-    const { rating, comment, user_email = "anonymous_user" } = req.body;
+    const { rating, comment, user_email = "anonymous_user", user_name } = req.body;
 
     // Validation
     if (!rating || rating < 1 || rating > 5) {
@@ -48,6 +48,7 @@ router.post("/", async (req, res) => {
       rating,
       comment,
       user_email, // optional for development
+      user_name,
     });
 
     if (error) {
