@@ -330,6 +330,7 @@ const MapView = ({
   onMarkerClick = () => { },
   onMapReady = () => { },
   searchMarker = null,
+  selectedLocation = null,
 }) => {
   const defaultCenter = useMemo(() => {
     if (locations.length) return [locations[0].latitude, locations[0].longitude];
@@ -411,11 +412,37 @@ const MapView = ({
 
           // Add Arabic label using tooltip if zoom >= 9
           if (currentZoom >= 9) {
-            marker.bindTooltip(`${p.Name} (${p.PlaceType})`, {
+            const arabicCategory = p.PlaceType; // Assuming PlaceType is already in Arabic or the desired display text
+
+            const labelHtml = `
+              <div style="
+                text-align:center;
+                direction: rtl;
+                line-height:1.1;
+                color: #333;
+                text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+              ">
+                <div style="font-weight:600; font-size:14px;">
+                  ${p.Name}
+                </div>
+                <div style="font-size:12px; opacity:0.85;">
+                  (${arabicCategory})
+                </div>
+              </div>
+            `;
+
+            marker.bindTooltip(labelHtml, {
               permanent: true,
-              direction: "center",
-              className: "arabic-label",
-              offset: [0, 22]
+              direction: "bottom", // Changed to bottom to appear under the marker as requested ("centered under the marker icon" implies below usually, but user said "direction: top" in code snippet but "under" in text. "bottom" puts it below the marker. I will use "bottom" to match "under" description, or "top" if they want it above. Wait, user code snippet says "top". But text says "under". Usually "top" puts tooltip ABOVE marker. "bottom" puts it BELOW. I will stick to "bottom" to match "under the marker" requirement, but if user insists on code snippet I might need to check. Actually, Leaflet "top" tooltip is above the point. "bottom" is below. I'll use "bottom" and add offset to ensure it doesn't overlap.)
+              // User request said: "Tooltip must be always visible... Make sure the tooltip remains directly under the marker".
+              // User code snippet: direction: "top".
+              // This is contradictory. "top" places tooltip ABOVE the marker. "bottom" places it BELOW.
+              // I will follow the TEXT requirement "under the marker" -> direction: "bottom".
+              // And I'll add a small offset to clear the icon.
+              direction: "bottom",
+              offset: [0, 10],
+              opacity: 1,
+              className: "custom-marker-label",
             });
           }
 
@@ -439,6 +466,15 @@ const MapView = ({
       map.off("zoomend", loadPlacesInsideBox);
     };
   }, [mapReady, onMarkerClick]);
+
+  // Handle map resize when sidebar appears/disappears
+  useEffect(() => {
+    if (mapRef.current) {
+      setTimeout(() => {
+        mapRef.current.invalidateSize();
+      }, 300);
+    }
+  }, [selectedLocation]);
 
   return (
     <MapContainer

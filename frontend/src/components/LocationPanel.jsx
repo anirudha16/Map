@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getReviewsByLocation, addReview } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +12,12 @@ const LocationPanel = ({ location, onClose }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [formState, setFormState] = useState({ rating: 5, comment: '' });
+  const [showMore, setShowMore] = useState(false);
+
+  // Reset showMore when location changes
+  useEffect(() => {
+    setShowMore(false);
+  }, [location?.id]);
 
   const locationId = location?.id;
   const shouldFetchReviews = Boolean(locationId && !location?.isVirtual);
@@ -71,6 +77,11 @@ const LocationPanel = ({ location, onClose }) => {
     mutation.mutate(formState);
   };
 
+  const description = location.description || '';
+  const shortDescription = description.length > 120
+    ? description.slice(0, 120) + "..."
+    : description;
+
   return (
     <aside className="location-panel">
       <header>
@@ -84,7 +95,17 @@ const LocationPanel = ({ location, onClose }) => {
       </header>
 
       <section>
-        <p className="modal-description">{location.description}</p>
+        <p className="modal-description">
+          {showMore ? description : shortDescription}
+        </p>
+        {description.length > 120 && (
+          <button
+            className="show-more-btn"
+            onClick={() => setShowMore(!showMore)}
+          >
+            {showMore ? "Show Less" : "Show More"}
+          </button>
+        )}
         <div className="coordinates">
           <span>Coordinates</span>
           <strong>{coordinates}</strong>

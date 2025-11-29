@@ -1,51 +1,65 @@
-:root {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #f5f6ff;
-  background-color: #05070f;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* Import Premium Theme System */
+@import './theme.css';
 
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #12142b, #05070f);
-}
-
+/* Additional Global Styles */
 #root {
   min-height: 100vh;
-  padding: 2rem;
 }
 
 a {
-  color: #5c7cfa;
+  color: var(--primary);
   text-decoration: none;
+  transition: color var(--transition-base);
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--primary-dark);
 }
 
+/* Leaflet Tooltip Styling */
 .leaflet-tooltip.arabic-label {
   direction: rtl;
   text-align: center;
   font-size: 13px;
   background: white;
   padding: 2px 6px;
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
   white-space: nowrap;
   border: none;
-  /* Reset border if previously set */
-  color: #000;
-  /* Ensure text is black */
+  color: var(--text-dark);
+}
+
+/* Leaflet Map Adjustments */
+.leaflet-container {
+  font-family: var(--font-family);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.leaflet-popup-tip {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Custom Marker Label - Transparent Tooltip */
+.custom-marker-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.custom-marker-label div {
+  white-space: nowrap;
+}
+
+/* Ensure the tooltip content is visible */
+.leaflet-tooltip-bottom.custom-marker-label::before {
+  display: none !important;
+  /* Hide the tooltip arrow */
 }
