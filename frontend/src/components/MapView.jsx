@@ -21,13 +21,13 @@
 // // Create a separate component to access the map instance
 // const MapController = ({ onMapReady }) => {
 //   const map = useMap();
-  
+
 //   useEffect(() => {
 //     if (map) {
 //       onMapReady(map);
 //     }
 //   }, [map, onMapReady]);
-  
+
 //   return null;
 // };
 
@@ -59,37 +59,37 @@
 //       console.log("⏳ Waiting for map... mapReady:", mapReady, "mapRef:", !!mapRef.current);
 //       return;
 //     }
-  
+
 //     console.log("✅ Map is ready! Enabling bounding box loading...");
-  
+
 //     const map = mapRef.current;
-  
+
 //     async function loadPlacesInsideBox() {
 //       const bounds = map.getBounds();
-  
+
 //       const ne = bounds.getNorthEast();
 //       const sw = bounds.getSouthWest();
-  
+
 //       const minLon = sw.lng;
 //       const minLat = sw.lat;
 //       const maxLon = ne.lng;
 //       const maxLat = ne.lat;
-  
+
 //       console.log("📦 Current Bounding Box:", { minLon, minLat, maxLon, maxLat });
-  
+
 //       try {
 //         const places = await getPlaces(minLon, minLat, maxLon, maxLat); // <- You'll create this API next
 //         console.log(`📌 Loaded ${places.length} places inside box`);
-  
+
 //         // Clear all old markers
 //         if (clusterRef.current) {
 //           clusterRef.current.clearLayers();
 //         }
-  
+
 //         // Add new markers
 //         places.forEach((p) => {
 //           if (!p.Latitude || !p.Longitude) return;
-  
+
 //           const locationData = {
 //             id: p.id,
 //             name: p.Name,
@@ -97,39 +97,39 @@
 //             latitude: p.Latitude,
 //             longitude: p.Longitude,
 //           };
-  
+
 //           const marker = L.marker([p.Latitude, p.Longitude])
 //             .on("click", () => onMarkerClick(locationData));
-  
+
 //           clusterRef.current.addLayer(marker);
 //         });
 //       } catch (err) {
 //         console.error("❌ Failed to load box places:", err);
 //       }
 //     }
-  
+
 //     // Load immediately
 //     loadPlacesInsideBox();
-  
+
 //     // Load when map moves or zooms
 //     map.on("moveend", loadPlacesInsideBox);
 //     map.on("zoomend", loadPlacesInsideBox);
-  
+
 //     return () => {
 //       map.off("moveend", loadPlacesInsideBox);
 //       map.off("zoomend", loadPlacesInsideBox);
 //     };
 //   }, [mapReady, onMarkerClick]);
-  
+
 
 //   // useEffect(() => {
 //   //   if (!mapReady || !mapRef.current) {
 //   //     console.log("⏳ Waiting for map... mapReady:", mapReady, "mapRef:", !!mapRef.current);
 //   //     return;
 //   //   }
-    
+
 //   //   console.log("✅ Map is ready! Loading places...");
-    
+
 //   //   if (!clusterRef.current) {
 //   //     clusterRef.current = L.markerClusterGroup({
 //   //       chunkedLoading: true,
@@ -138,18 +138,18 @@
 //   //     mapRef.current.addLayer(clusterRef.current);
 //   //     console.log("✅ Cluster layer created");
 //   //   }
-    
+
 //   //   async function loadPlaces() {
 //   //     try {
 //   //       const places = await getPlaces();
 //   //       console.log(`✅ Loading ${places.length} places...`);
-        
+
 //   //       places.forEach((p) => {
 //   //         if (!p.Latitude || !p.Longitude) {
 //   //           console.log("⚠️ Skipping place without coords:", p.Name);
 //   //           return;
 //   //         }
-          
+
 //   //         const marker = L.marker([p.Latitude, p.Longitude])
 //   //           .bindPopup(`
 //   //             <strong>${p.Name || "Unknown"}</strong><br>
@@ -158,18 +158,18 @@
 //   //             <small>Type: ${p.PlaceType || "N/A"} | Book: ${p.Book || "N/A"}</small><br>
 //   //             <small>Author: ${p.Author || "N/A"}</small>
 //   //           `);
-          
+
 //   //         clusterRef.current.addLayer(marker);
 //   //       });
-        
+
 //   //       console.log("✅ Places loaded successfully!");
 //   //     } catch (err) {
 //   //       console.error("❌ Failed to load places:", err);
 //   //     }
 //   //   }
-    
+
 //   //   loadPlaces();
-    
+
 //   //   return () => {
 //   //     if (clusterRef.current) {
 //   //       clusterRef.current.clearLayers();
@@ -181,13 +181,13 @@
 //     try {
 //       const places = await getPlaces();
 //       console.log(`✅ Loading ${places.length} places...`);
-      
+
 //       places.forEach((p) => {
 //         if (!p.Latitude || !p.Longitude) {
 //           console.log("⚠️ Skipping place without coords:", p.Name);
 //           return;
 //         }
-        
+
 //         // Convert the place data to match your location format
 //         const locationData = {
 //           id: p.id || `place-${p.Latitude}-${p.Longitude}`,
@@ -202,7 +202,7 @@
 //           author: p.Author,
 //           created_at: p.created_at || new Date().toISOString()
 //         };
-        
+
 //         const marker = L.marker([p.Latitude, p.Longitude])
 //           .bindPopup(`
 //             <strong>${p.Name || "Unknown"}</strong><br>
@@ -215,18 +215,18 @@
 //             // Call the onMarkerClick handler when cluster marker is clicked
 //             onMarkerClick(locationData);
 //           });
-        
+
 //         clusterRef.current.addLayer(marker);
 //       });
-      
+
 //       console.log("✅ Places loaded successfully!");
 //     } catch (err) {
 //       console.error("❌ Failed to load places:", err);
 //     }
 //   }
-  
+
 //   loadPlaces();
-  
+
 //   return () => {
 //     if (clusterRef.current) {
 //       clusterRef.current.clearLayers();
@@ -286,6 +286,7 @@ import L from 'leaflet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { getPlacesInBBox } from '../services/api';   // <-- IMPORTANT: update API
+import { iconMap, mapArabicToCategory } from '../utils/iconMap';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -308,7 +309,7 @@ const MapController = ({ onMapReady }) => {
   return null;
 };
 
-const MIN_FETCH_ZOOM = 6; // CHANGED FOR BOUNDING BOX FETCHING
+const MIN_FETCH_ZOOM = 10; // CHANGED FOR BOUNDING BOX FETCHING
 
 function filterByZoom(places, zoom) {
   if (zoom < 8) return [];
@@ -326,8 +327,8 @@ function filterByZoom(places, zoom) {
 
 const MapView = ({
   locations = [],
-  onMarkerClick = () => {},
-  onMapReady = () => {},
+  onMarkerClick = () => { },
+  onMapReady = () => { },
   searchMarker = null,
 }) => {
   const defaultCenter = useMemo(() => {
@@ -347,7 +348,7 @@ const MapView = ({
   };
 
   useEffect(() => {
-    if (!mapReady || !mapRef.current) return; // CHANGED FOR BOUNDING BOX FETCHING
+    if (!mapReady || !mapRef.current) return;
 
     console.log("🌍 Map ready → Bounding Box search enabled");
 
@@ -358,12 +359,15 @@ const MapView = ({
       markersLayerRef.current = L.layerGroup().addTo(map);
     }
 
-    async function loadPlacesInsideBox() { // CHANGED FOR BOUNDING BOX FETCHING
-      const currentZoom = map.getZoom(); // CHANGED FOR BOUNDING BOX FETCHING
-      if (currentZoom < MIN_FETCH_ZOOM) { // CHANGED FOR BOUNDING BOX FETCHING
-        markersLayerRef.current.clearLayers(); // CHANGED FOR BOUNDING BOX FETCHING
-        return; // CHANGED FOR BOUNDING BOX FETCHING
-      } // CHANGED FOR BOUNDING BOX FETCHING
+    async function loadPlacesInsideBox() {
+      const currentZoom = map.getZoom();
+
+      // Clear current markers first
+      markersLayerRef.current.clearLayers();
+
+      if (currentZoom < MIN_FETCH_ZOOM) {
+        return;
+      }
 
       const bounds = map.getBounds();
       const ne = bounds.getNorthEast();
@@ -377,12 +381,9 @@ const MapView = ({
       console.log("📦 Bounding Box:", { minLon, minLat, maxLon, maxLat });
 
       try {
-        const fetchedData = await getPlacesInBBox(minLon, minLat, maxLon, maxLat); // CHANGED FOR BOUNDING BOX FETCHING
+        const fetchedData = await getPlacesInBBox(minLon, minLat, maxLon, maxLat);
         const places = filterByZoom(fetchedData, currentZoom);
         console.log(`📌 Fetched ${places.length} places in visible region`);
-
-        // Clear current markers
-        markersLayerRef.current.clearLayers(); // CHANGED FOR BOUNDING BOX FETCHING
 
         // Add new markers
         places.forEach((p) => {
@@ -396,8 +397,27 @@ const MapView = ({
             longitude: p.Longitude,
           };
 
-          const marker = L.marker([p.Latitude, p.Longitude])
+          const category = mapArabicToCategory(p.PlaceType);
+          const icon = iconMap[category] || iconMap.default;
+
+          const lat = p.Latitude;
+          const lon = p.Longitude;
+
+          // 1. Create main marker
+          const marker = L.marker([lat, lon], { icon })
             .on("click", () => onMarkerClick(locationData));
+
+          marker.bindPopup(p.Name);
+
+          // Add Arabic label using tooltip if zoom >= 9
+          if (currentZoom >= 9) {
+            marker.bindTooltip(`${p.Name} (${p.PlaceType})`, {
+              permanent: true,
+              direction: "center",
+              className: "arabic-label",
+              offset: [0, 22]
+            });
+          }
 
           markersLayerRef.current.addLayer(marker);
         });
@@ -408,13 +428,15 @@ const MapView = ({
     }
 
     // Load when map moves or zooms
-    map.on("moveend", loadPlacesInsideBox); // CHANGED FOR BOUNDING BOX FETCHING
+    map.on("moveend", loadPlacesInsideBox);
+    map.on("zoomend", loadPlacesInsideBox);
 
     // Initial fetch
-    loadPlacesInsideBox(); // CHANGED FOR BOUNDING BOX FETCHING
+    loadPlacesInsideBox();
 
     return () => {
-      map.off("moveend", loadPlacesInsideBox); // CHANGED FOR BOUNDING BOX FETCHING
+      map.off("moveend", loadPlacesInsideBox);
+      map.off("zoomend", loadPlacesInsideBox);
     };
   }, [mapReady, onMarkerClick]);
 

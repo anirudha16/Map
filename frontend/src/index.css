@@ -34,3 +34,18 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.leaflet-tooltip.arabic-label {
+  direction: rtl;
+  text-align: center;
+  font-size: 13px;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  border: none;
+  /* Reset border if previously set */
+  color: #000;
+  /* Ensure text is black */
+}
