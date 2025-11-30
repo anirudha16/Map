@@ -1,3 +1,5 @@
+
+
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import MapView from '../components/MapView';
@@ -6,6 +8,7 @@ import LocationPanel from '../components/LocationPanel';
 import { getAllLocations, getLocationByName } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SearchTab from '../components/SearchTab';
+import Profile from './Profile';
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
@@ -14,6 +17,7 @@ const Dashboard = () => {
   const [mapInstance, setMapInstance] = useState(null);
   const [searchError, setSearchError] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('home');
 
   const {
     data: locations,
@@ -42,6 +46,7 @@ const Dashboard = () => {
       longitude: lng,
       name: 'Custom coordinates',
     });
+
     if (mapInstance) {
       mapInstance.flyTo([lat, lng], 13, { duration: 1.4 });
     }
@@ -61,6 +66,7 @@ const Dashboard = () => {
       const [firstMatch] = data;
       setSelectedLocation(firstMatch);
       setSearchMarker(null);
+
       if (mapInstance) {
         mapInstance.flyTo(
           [firstMatch.latitude, firstMatch.longitude],
@@ -87,11 +93,9 @@ const Dashboard = () => {
     [locations]
   );
 
-  const [activeTab, setActiveTab] = useState('home');
-
   return (
     <div className="dashboard">
-      <header className="dashboard-header">
+      <div className="dashboard-header">
         <div>
           <h1>Map Explorer</h1>
           <p className="subtle-text">Find places and share experiences</p>
@@ -102,33 +106,26 @@ const Dashboard = () => {
             <button onClick={signOut}>Logout</button>
           </div>
         )}
-      </header>
-
-      {/* Tab Navigation */}
-      <div className="tab-bar">
-        <button
-          className={`tab-button ${activeTab === 'home' ? 'active' : ''}`}
-          onClick={() => setActiveTab('home')}
-        >
-          Home
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'search' ? 'active' : ''}`}
-          onClick={() => setActiveTab('search')}
-        >
-          Search
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
-          onClick={() => setActiveTab('profile')}
-        >
-          Profile
-        </button>
       </div>
 
-      {/* Home Tab Content */}
-      {activeTab === 'home' && (
-        <>
+      <div className="tab-bar">
+        {[
+          ["home", "Home"],
+          ["search", "Search"],
+          ["profile", "Profile"],
+        ].map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className={`tab-button ${activeTab === key ? 'active' : ''}`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div>
+        {activeTab === 'home' && (
           <div className={`home-map-layout ${selectedLocation ? 'has-sidebar' : ''}`}>
             <div className="home-map-area">
               <div className="map-wrapper">
@@ -163,32 +160,22 @@ const Dashboard = () => {
               </div>
             )}
           </div>
-        </>
-      )}
+        )}
 
-      {/* Search Tab Content */}
-      {activeTab === 'search' && (
-        <div className="mt-8">
-          <SearchBar
-            onCoordinateSearch={handleCoordinateSearch}
-            onNameSearch={handleNameSearch}
-            searchError={searchError}
-            searchLoading={searchLoading}
-          />
-          <SearchTab />
-        </div>
-      )}
-
-      {/* Profile Tab Content */}
-      {activeTab === 'profile' && (
-        <div className="profile-card">
-          <h2>Profile</h2>
-          <div className="profile-row">
-            <strong>Email:</strong> {user?.email}
+        {activeTab === 'search' && (
+          <div>
+            <SearchBar
+              onCoordinateSearch={handleCoordinateSearch}
+              onNameSearch={handleNameSearch}
+              searchError={searchError}
+              searchLoading={searchLoading}
+            />
+            <SearchTab />
           </div>
-          <button className="logout-btn" onClick={signOut}>Logout</button>
-        </div>
-      )}
+        )}
+
+        {activeTab === 'profile' && <Profile />}
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getReviewsByLocation, addReview } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -14,10 +14,6 @@ const LocationPanel = ({ location, onClose }) => {
   const [formState, setFormState] = useState({ rating: 5, comment: '' });
   const [showMore, setShowMore] = useState(false);
 
-  // Reset showMore when location changes
-  useEffect(() => {
-    setShowMore(false);
-  }, [location?.id]);
 
   const locationId = location?.id;
   const shouldFetchReviews = Boolean(locationId && !location?.isVirtual);
@@ -83,7 +79,7 @@ const LocationPanel = ({ location, onClose }) => {
     : description;
 
   return (
-    <aside className="location-panel">
+    <aside className="location-panel" key={location.id}>
       <header>
         <div>
           <h2>{location.name}</h2>
