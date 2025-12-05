@@ -1,13 +1,12 @@
-const express = require("express");
-const router = express.Router();
-
-const {
+import express from "express";
+import {
   getAllLocations,
   getLocationById,
   searchLocationsByName,
-} = require("../services/locationService");
+} from "../services/locationService.js";
 
-// GET ALL locations
+const router = express.Router();
+
 router.get("/", async (req, res) => {
   try {
     const { data, error } = await getAllLocations();
@@ -24,7 +23,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// SEARCH by name
 router.get("/search", async (req, res) => {
   const name = req.query.name;
 
@@ -46,13 +44,11 @@ router.get("/search", async (req, res) => {
   return res.json(data);
 });
 
-// Helper to validate UUID
 const isUUID = (str) => {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   return uuidRegex.test(str);
 };
 
-// GET location by ID
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
 
@@ -74,4 +70,4 @@ router.get("/:id", async (req, res) => {
   return res.json(data);
 });
 
-module.exports = router;
+export default router;

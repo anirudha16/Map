@@ -1,7 +1,6 @@
-const { supabase } = require("../utils/supabaseClient");
+import { supabase } from "../utils/supabaseClient.js";
 
-// GET all reviews for one location
-const getReviewsByLocation = async (locationId) => {
+export const getReviewsByLocation = async (locationId) => {
   const { data, error } = await supabase
     .from("reviews")
     .select("id, rating, comment, created_at, user_email, user_name")
@@ -11,8 +10,7 @@ const getReviewsByLocation = async (locationId) => {
   return { data, error };
 };
 
-// ADD review (public submission)
-const addReview = async ({ locationId, rating, comment, user_email, user_name }) => {
+export const addReview = async ({ locationId, rating, comment, user_email, user_name }) => {
   const { data, error } = await supabase
     .from('reviews')
     .insert({
@@ -25,10 +23,5 @@ const addReview = async ({ locationId, rating, comment, user_email, user_name })
     .select('*');
 
   return { data, error };
-};
-
-module.exports = {
-  getReviewsByLocation,
-  addReview,
 };
 

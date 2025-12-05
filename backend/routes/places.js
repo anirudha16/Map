@@ -1,18 +1,20 @@
-const router = require("express").Router();
-const { supabase } = require("../utils/supabaseClient");
+import express from "express";
+import { supabase } from "../utils/supabaseClient.js";
+
+const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const min_lon = Number(req.query.minLon ?? -180); // CHANGED FOR BOUNDING BOX FETCHING
-    const min_lat = Number(req.query.minLat ?? -90); // CHANGED FOR BOUNDING BOX FETCHING
-    const max_lon = Number(req.query.maxLon ?? 180); // CHANGED FOR BOUNDING BOX FETCHING
-    const max_lat = Number(req.query.maxLat ?? 90); // CHANGED FOR BOUNDING BOX FETCHING
-    const { data, error } = await supabase.rpc("get_places_in_bbox", { // CHANGED FOR BOUNDING BOX FETCHING
-      min_lon, // CHANGED FOR BOUNDING BOX FETCHING
-      min_lat, // CHANGED FOR BOUNDING BOX FETCHING
-      max_lon, // CHANGED FOR BOUNDING BOX FETCHING
-      max_lat, // CHANGED FOR BOUNDING BOX FETCHING
-    }); // CHANGED FOR BOUNDING BOX FETCHING
+    const min_lon = Number(req.query.minLon ?? -180);
+    const min_lat = Number(req.query.minLat ?? -90);
+    const max_lon = Number(req.query.maxLon ?? 180);
+    const max_lat = Number(req.query.maxLat ?? 90);
+    const { data, error } = await supabase.rpc("get_places_in_bbox", {
+      min_lon,
+      min_lat,
+      max_lon,
+      max_lat,
+    });
 
     if (error) {
       console.error("Places query error:", error);
@@ -34,7 +36,6 @@ router.get("/", async (req, res) => {
 router.get("/bbox", async (req, res) => {
   const { minLon, minLat, maxLon, maxLat, zoom } = req.query;
 
-  // Validate
   if (!minLon || !minLat || !maxLon || !maxLat) {
     return res.status(400).json({ error: "Bounding box params missing" });
   }
@@ -51,7 +52,6 @@ router.get("/bbox", async (req, res) => {
       return res.json([]);
     }
 
-    // Call the Supabase RPC function
     const { data, error } = await supabase.rpc("get_places_in_bbox", {
       min_lon,
       min_lat,
@@ -72,4 +72,4 @@ router.get("/bbox", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,12 +1,11 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   getReviewsByLocation,
   addReview,
-} = require("../services/reviewService");
+} from "../services/reviewService.js";
 
 const router = express.Router({ mergeParams: true });
 
-// GET all reviews for a location
 router.get("/", async (req, res) => {
   try {
     const locationId = req.params.locationId;
@@ -25,13 +24,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST a new review (NO JWT REQUIRED)
 router.post("/", async (req, res) => {
   try {
     const locationId = req.params.locationId;
     const { rating, comment, user_email = "anonymous_user", user_name } = req.body;
 
-    // Validation
     if (!rating || rating < 1 || rating > 5) {
       return res
         .status(400)
@@ -42,12 +39,11 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Comment is required" });
     }
 
-    // Insert review
     const { data, error } = await addReview({
       locationId,
       rating,
       comment,
-      user_email, // optional for development
+      user_email,
       user_name,
     });
 
@@ -63,4 +59,4 @@ router.post("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

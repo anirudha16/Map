@@ -1,34 +1,35 @@
-const { createClient } = require('@supabase/supabase-js');
-const dotenv = require('dotenv');
+import { createClient } from '@supabase/supabase-js';
 
-dotenv.config();
+let supabaseInstance = null;
 
-const {
-  SUPABASE_URL,
-  SUPABASE_SERVICE_ROLE_KEY,
-  SUPABASE_ANON_KEY,
-} = process.env;
+function getSupabase() {
+  if (!supabaseInstance) {
+    const SUPABASE_URL = process.env.SUPABASE_URL;
+    const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
-const supabaseKey = SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY;
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      console.error('❌ SUPABASE_URL:', SUPABASE_URL);
+      console.error('❌ SUPABASE_ANON_KEY:', SUPABASE_ANON_KEY);
+      throw new Error(
+        'Missing Supabase credentials. Ensure SUPABASE_URL and SUPABASE_ANON_KEY are set in backend/.env'
+      );
+    }
 
-if (!SUPABASE_URL || !supabaseKey) {
-  throw new Error(
-    'Missing Supabase credentials. Ensure SUPABASE_URL and either SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY are set in backend/.env'
-  );
+    supabaseInstance = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+
+    console.log('✅ supabase initialized');
+  }
+
+  return supabaseInstance;
 }
 
-if (!SUPABASE_SERVICE_ROLE_KEY) {
-  console.warn(
-    '[supabase] Service role key missing. Falling back to anon key—writes may fail if row-level security blocks them.'
-  );
-}
-
-const supabase = createClient(SUPABASE_URL, supabaseKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false,
+export const supabase = new Proxy({}, {
+  get: (target, prop) => {
+    return getSupabase()[prop];
   },
 });
-
-module.exports = { supabase };
-

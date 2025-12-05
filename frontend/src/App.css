@@ -905,33 +905,3 @@ button:disabled {
   transform: translateY(-1px);
 }
 
-.leaflet-tooltip.hover-info-tooltip {
-    pointer-events: auto !important;
-    z-index: 9999 !important; /* optional but recommended */
-}
-.leaflet-marker-pane {
-    z-index: 400 !important;
-}
-
-.leaflet-tooltip-pane {
-    z-index: 500 !important; /* tooltip stays above markers */
-}
-
-/* FORCE TOOLTIP TO THE VERY TOP ABOVE ALL LEAFLET PANES */
-.leaflet-tooltip-pane {
-    z-index: 999999 !important;
-    pointer-events: auto !important;
-}
-
-.leaflet-pane,
-.leaflet-marker-pane,
-.leaflet-overlay-pane,
-.leaflet-shadow-pane {
-    z-index: 1 !important;
-}
-
-/* Make sure tooltip itself accepts hover and clicks */
-.leaflet-tooltip,
-.leaflet-tooltip.hover-info-tooltip {
-    pointer-events: auto !important;
-}

@@ -408,7 +408,16 @@ const MapView = ({
           // 1. Create main marker
           const marker = L.marker([lat, lon], { icon });
 
-          // Build responsive Arabic tooltip
+
+          // CLICK-ONLY POPUP
+          const clickPopup = L.popup({
+            autoClose: true,
+            closeOnClick: true,
+            className: "hover-info-tooltip",
+            offset: L.point(0, -35),
+          });
+
+          // Popup HTML
           const tooltipHtml = `
   <div style="
     padding: 8px 10px;
@@ -417,7 +426,6 @@ const MapView = ({
     max-width: 220px;
     font-family: system-ui, sans-serif;
   ">
-
     <div style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">
       ${p.Name}
     </div>
@@ -451,36 +459,18 @@ const MapView = ({
   </div>
 `;
 
-          // Tooltip on hover only
-          marker.bindTooltip(tooltipHtml, {
-            direction: "top",
-            opacity: 0.97,
-            className: "hover-info-tooltip",
-            interactive: true,
-            sticky: true,       // <-- SUPER IMPORTANT
-            permanent: false,
-          });
+          // OPEN POPUP ONLY ON CLICK
+          marker.on("click", () => {
+            clickPopup
+              .setLatLng([lat, lon])
+              .setContent(tooltipHtml)
+              .openOn(map);
 
-
-          // Prevent click on marker from opening sidebar
-          marker.off("click");
-
-          marker.on("tooltipopen", () => {
-            // Disable dragging so movestart will NOT fire
-            map.dragging.disable();
-
-            const btn = document.getElementById(`showMore-${p.id}`);
-            if (btn) {
-              btn.onclick = () => {
-                onMarkerClick(locationData);
-                map.dragging.enable(); // re-enable after click
-              };
-            }
-          });
-
-          marker.on("tooltipclose", () => {
-            // Re-enable map dragging when tooltip closes
-            map.dragging.enable();
+            // Attach Show More button
+            setTimeout(() => {
+              const btn = document.getElementById(`showMore-${p.id}`);
+              if (btn) btn.onclick = () => onMarkerClick(locationData);
+            }, 50);
           });
 
 
@@ -494,8 +484,17 @@ const MapView = ({
     }
 
     map.on("movestart", () => {
+      const tooltipEl = document.querySelector(".hover-info-tooltip");
+
+      // If tooltip exists and mouse is over it → DO NOT CLEAR MARKERS
+      if (tooltipEl && tooltipEl.matches(":hover")) {
+        console.log("⛔ Prevented clearing markers while hovering tooltip");
+        return;
+      }
+
       markersLayerRef.current?.clearLayers();
     });
+
 
     // Load when map moves or zooms
     // map.on("moveend", loadPlacesInsideBox);

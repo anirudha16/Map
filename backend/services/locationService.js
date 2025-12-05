@@ -1,23 +1,17 @@
-const { supabase } = require('../utils/supabaseClient');
+import { supabase } from '../utils/supabaseClient.js';
 
 const baseSelect = () =>
   supabase
     .from('locations')
     .select('id, name, description, latitude, longitude, created_at');
 
-const getAllLocations = () => baseSelect();
+export const getAllLocations = () => baseSelect();
 
-const getLocationById = (id) =>
+export const getLocationById = (id) =>
   baseSelect()
     .eq('id', id)
     .single();
 
-const searchLocationsByName = (name) =>
+export const searchLocationsByName = (name) =>
   baseSelect().ilike('name', `%${name}%`).limit(5);
-
-module.exports = {
-  getAllLocations,
-  getLocationById,
-  searchLocationsByName,
-};
 

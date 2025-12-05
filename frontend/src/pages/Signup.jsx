@@ -117,6 +117,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -228,6 +229,10 @@ const Signup = () => {
 
             {error && <p className="error-text">{error}</p>}
           </form>
+
+          <div style={{ marginTop: "20px" }}>
+            <GoogleLoginButton />
+          </div>
 
           <p className="subtle-text">
             Already have an account? <Link to="/login">Login</Link>
