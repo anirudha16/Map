@@ -1,118 +1,174 @@
 
 // import { useState, useMemo } from "react";
 
-// const ARABIC_CATEGORIES = [
-//     "بئر", "بحر", "بحيرة", "جبل", "جزيرة", "حصن", "حي", "خليج", "رأس", "رمال",
-//     "ساحل", "سبخة", "سد", "سوق", "سهل", "طريق", "عين", "غابة", "قناة", "قرية",
-//     "قلعة", "مخيم", "مدينة", "مرعى", "مزرعة", "مسجد", "مطعم", "ممر بين الرمال",
-//     "مملحة", "منخفض صحراوي", "منزل", "مورد مياه", "موضع", "وادي", "هضبة"
+// const CATEGORY_OPTIONS = [
+//     "All",
+//     "City",
+//     "Mountain",
+//     "Valley",
+//     "Village",
+//     "Forest",
+//     "Desert",
+//     "Coast",
+//     "Water source",
+//     "Restaurant",
+//     "Mosque",
+//     "Hub"
+// ];
+
+// const REGION_OPTIONS = [
+//     "All",
+//     "Central",
+//     "North",
+//     "South",
+//     "East",
+//     "West"
+// ];
+
+// const RATING_OPTIONS = [
+//     "Any",
+//     "3+",
+//     "4+",
+//     "4.5+"
 // ];
 
 // const Search = ({ locations = [] }) => {
 //     const [searchTerm, setSearchTerm] = useState("");
-//     const [selectedCategory, setSelectedCategory] = useState("");
+//     const [category, setCategory] = useState("");
+//     const [region, setRegion] = useState("");
+//     const [rating, setRating] = useState("");
+//     const [hasReviewsOnly, setHasReviewsOnly] = useState(false);
+//     const [sortBy, setSortBy] = useState("name-asc");
 
-//     const filteredLocations = useMemo(() => {
-//         return locations.filter((location) => {
-//             const matchesSearch =
-//                 location.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//                 location.description?.toLowerCase().includes(searchTerm.toLowerCase());
+//     const filtered = useMemo(() => {
+//         let result = locations.filter((loc) => {
+//             const matchText =
+//                 loc.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//                 loc.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
-//             const matchesCategory = selectedCategory
-//                 ? location.placeType === selectedCategory
-//                 : true;
+//             const matchCategory = category ? loc.placeType === category : true;
+//             const matchRegion = region ? loc.region === region : true;
+//             const matchRating = rating ? parseFloat(loc.rating || 0) >= parseFloat(rating) : true;
+//             const matchReviews = hasReviewsOnly ? (loc.reviewCount || 0) > 0 : true;
 
-//             return matchesSearch && matchesCategory;
+//             return matchText && matchCategory && matchRegion && matchRating && matchReviews;
 //         });
-//     }, [locations, searchTerm, selectedCategory]);
+
+//         if (sortBy === "name-asc") result.sort((a, b) => a.name.localeCompare(b.name));
+//         if (sortBy === "name-desc") result.sort((a, b) => b.name.localeCompare(a.name));
+
+//         return result;
+//     }, [locations, searchTerm, category, region, rating, hasReviewsOnly, sortBy]);
 
 //     return (
 //         <div className="search-container page-content">
-//             {/* MAIN SEARCH BAR */}
-//             <div className="search-card">
-//                 <label>Search by name</label>
-//                 <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
-//                     <input
-//                         type="text"
-//                         className="search-input-main"
-//                         placeholder="Try 'Central Park'"
-//                         value={searchTerm}
-//                         onChange={(e) => setSearchTerm(e.target.value)}
-//                     />
+//             <div className="search-layout-wrapper">
+//                 {/* LEFT SIDEBAR FILTERS */}
+//                 <aside className="filters-card">
+//                     <h2 className="filters-title">Filters</h2>
 
-//                     <button className="search-btn-main">Search</button>
-//                 </div>
-//             </div>
+//                     <div className="filter-group">
+//                         <label className="filter-label">Search by name</label>
+//                         <input
+//                             type="text"
+//                             placeholder="Type a place name..."
+//                             value={searchTerm}
+//                             onChange={(e) => setSearchTerm(e.target.value)}
+//                             className="filter-input"
+//                         />
+//                     </div>
 
-//             {/* FILTERS + RESULTS LAYOUT */}
-//             <div className="search-layout">
-//                 {/* LEFT FILTER PANEL */}
-//                 <aside className="filter-card">
-//                     <label>Search by name</label>
-//                     <input
-//                         className="filter-input"
-//                         placeholder="Enter place name…"
-//                         value={searchTerm}
-//                         onChange={(e) => setSearchTerm(e.target.value)}
-//                     />
-
-//                     <div style={{ marginTop: "20px" }}>
-//                         <label>Category</label>
+//                     <div className="filter-group">
+//                         <label className="filter-label">Category</label>
 //                         <select
+//                             value={category}
+//                             onChange={(e) => setCategory(e.target.value)}
 //                             className="filter-select"
-//                             value={selectedCategory}
-//                             onChange={(e) => setSelectedCategory(e.target.value)}
 //                         >
-//                             <option value="">All</option>
-//                             {ARABIC_CATEGORIES.map((cat) => (
-//                                 <option key={cat} value={cat}>
+//                             {CATEGORY_OPTIONS.map((cat) => (
+//                                 <option key={cat} value={cat === "All" ? "" : cat}>
 //                                     {cat}
 //                                 </option>
 //                             ))}
 //                         </select>
 //                     </div>
 
-//                     <button className="apply-btn">Apply Filters</button>
-//                     <button className="reset-btn" onClick={() => {
-//                         setSearchTerm("");
-//                         setSelectedCategory("");
-//                     }}>
-//                         Reset
-//                     </button>
-//                 </aside>
-
-//                 {/* RESULTS PANEL */}
-//                 <main className="results-panel">
-//                     <div className="results-header-box">
-//                         <div className="results-count">
-//                             {filteredLocations.length} Results
-//                         </div>
-
-//                         <select className="sort-select">
-//                             <option>Name (A–Z)</option>
-//                             <option>Name (Z–A)</option>
+//                     <div className="filter-group">
+//                         <label className="filter-label">Region</label>
+//                         <select
+//                             value={region}
+//                             onChange={(e) => setRegion(e.target.value)}
+//                             className="filter-select"
+//                         >
+//                             {REGION_OPTIONS.map((reg) => (
+//                                 <option key={reg} value={reg === "All" ? "" : reg}>
+//                                     {reg}
+//                                 </option>
+//                             ))}
 //                         </select>
 //                     </div>
 
-//                     {/* RESULTS LIST */}
-//                     {filteredLocations.length > 0 ? (
-//                         filteredLocations.map((location) => (
-//                             <div key={location.id} className="result-card">
-//                                 <div>
-//                                     <div className="result-title">{location.name}</div>
-//                                     <div className="result-coords">
-//                                         {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-//                                     </div>
-//                                     {location.description && (
-//                                         <div className="result-description">
-//                                             {location.description}
-//                                         </div>
+//                     <div className="filter-group">
+//                         <label className="filter-label">Rating</label>
+//                         <select
+//                             value={rating}
+//                             onChange={(e) => setRating(e.target.value)}
+//                             className="filter-select"
+//                         >
+//                             {RATING_OPTIONS.map((rat) => (
+//                                 <option key={rat} value={rat === "Any" ? "" : rat.slice(0, -1)}>
+//                                     {rat}
+//                                 </option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     <div className="filter-group checkbox-group">
+//                         <label className="checkbox-label">
+//                             <input
+//                                 type="checkbox"
+//                                 checked={hasReviewsOnly}
+//                                 onChange={(e) => setHasReviewsOnly(e.target.checked)}
+//                                 className="checkbox-input"
+//                             />
+//                             <span>Has reviews only</span>
+//                         </label>
+//                     </div>
+
+//                     <button className="filters-button">Apply Filters</button>
+//                 </aside>
+
+//                 {/* RIGHT SIDE RESULTS */}
+//                 <main className="results-section">
+//                     <div className="results-header">
+//                         <h3 className="results-count">{filtered.length} Results</h3>
+//                         <select
+//                             value={sortBy}
+//                             onChange={(e) => setSortBy(e.target.value)}
+//                             className="sort-dropdown"
+//                         >
+//                             <option value="name-asc">Name (A–Z)</option>
+//                             <option value="name-desc">Name (Z–A)</option>
+//                         </select>
+//                     </div>
+
+//                     {filtered.length > 0 ? (
+//                         <div className="results-list">
+//                             {filtered.map((loc) => (
+//                                 <div key={loc.id} className="results-card">
+//                                     <h3 className="result-title">{loc.name}</h3>
+//                                     <p className="result-category">{loc.placeType || "Not specified"}</p>
+//                                     {loc.description && (
+//                                         <p className="result-description">{loc.description}</p>
 //                                     )}
+//                                     <span className="result-coords">
+//                                         {loc.latitude.toFixed(4)}, {loc.longitude.toFixed(4)}
+//                                     </span>
 //                                 </div>
-//                             </div>
-//                         ))
+//                             ))}
+//                         </div>
 //                     ) : (
-//                         <div className="result-card">No matching results</div>
+//                         <div className="results-empty">No matching results</div>
 //                     )}
 //                 </main>
 //             </div>
@@ -121,74 +177,163 @@
 // };
 
 // export default Search;
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
+import { fetchUserFavorites, toggleFavorite } from "../services/favorites";
 
-const CATEGORY_OPTIONS = [
-    "All",
-    "City",
-    "Mountain",
-    "Valley",
-    "Village",
-    "Forest",
-    "Desert",
-    "Coast",
-    "Water source",
-    "Restaurant",
-    "Mosque",
-    "Hub"
-];
+const Search = () => {
+    const { user } = useAuth();
 
-const REGION_OPTIONS = [
-    "All",
-    "Central",
-    "North",
-    "South",
-    "East",
-    "West"
-];
-
-const RATING_OPTIONS = [
-    "Any",
-    "3+",
-    "4+",
-    "4.5+"
-];
-
-const Search = ({ locations = [] }) => {
+    // FILTER STATES
     const [searchTerm, setSearchTerm] = useState("");
-    const [category, setCategory] = useState("");
-    const [region, setRegion] = useState("");
-    const [rating, setRating] = useState("");
+    const [category, setCategory] = useState("All");
+    const [region, setRegion] = useState("All");
+    const [rating, setRating] = useState("Any");
     const [hasReviewsOnly, setHasReviewsOnly] = useState(false);
     const [sortBy, setSortBy] = useState("name-asc");
 
-    const filtered = useMemo(() => {
-        let result = locations.filter((loc) => {
-            const matchText =
-                loc.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                loc.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    // OPTIONS FROM DATABASE
+    const [categories, setCategories] = useState([]);
+    const [regions, setRegions] = useState([]);
 
-            const matchCategory = category ? loc.placeType === category : true;
-            const matchRegion = region ? loc.region === region : true;
-            const matchRating = rating ? parseFloat(loc.rating || 0) >= parseFloat(rating) : true;
-            const matchReviews = hasReviewsOnly ? (loc.reviewCount || 0) > 0 : true;
+    // RESULTS FROM SUPABASE
+    const [results, setResults] = useState([]);
+    const [favorites, setFavorites] = useState([]);
 
-            return matchText && matchCategory && matchRegion && matchRating && matchReviews;
-        });
+    // ================================
+    // FETCH UNIQUE CATEGORIES (PlaceType)
+    // ================================
+    const fetchCategories = async () => {
+        const { data } = await supabase
+            .from("places")
+            .select("PlaceType")
+            .not("PlaceType", "is", null);
 
-        if (sortBy === "name-asc") result.sort((a, b) => a.name.localeCompare(b.name));
-        if (sortBy === "name-desc") result.sort((a, b) => b.name.localeCompare(a.name));
+        const unique = [...new Set(data.map((item) => item.PlaceType))];
+        setCategories(["All", ...unique]);
+    };
 
-        return result;
-    }, [locations, searchTerm, category, region, rating, hasReviewsOnly, sortBy]);
+    // ================================
+    // FETCH UNIQUE REGIONS (City)
+    // ================================
+    const fetchRegions = async () => {
+        const { data } = await supabase
+            .from("places")
+            .select("City")
+            .not("City", "is", null);
+
+        const unique = [...new Set(data.map((item) => item.City))];
+        setRegions(["All", ...unique]);
+    };
+
+    // ================================
+    // MAIN FILTER QUERY (Supabase View)
+    // ================================
+    const fetchFilteredPlaces = async () => {
+        let query = supabase.from("places_with_reviews").select("*");
+
+        // TEXT SEARCH
+        if (searchTerm.trim() !== "") {
+            query = query.ilike("Name", `%${searchTerm}%`);
+        }
+
+        // CATEGORY FILTER
+        if (category !== "All") {
+            query = query.eq("PlaceType", category);
+        }
+
+        // REGION FILTER
+        if (region !== "All") {
+            query = query.eq("City", region);
+        }
+
+        // RATING FILTER
+        if (rating !== "Any") {
+            query = query.gte("avg_rating", Number(rating));
+        }
+
+        // HAS REVIEWS ONLY
+        if (hasReviewsOnly) {
+            query = query.gt("review_count", 0);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error("❌ Error fetching places:", error);
+            return;
+        }
+
+        // SORTING
+        if (sortBy === "name-asc") {
+            data.sort((a, b) => a.Name.localeCompare(b.Name));
+        } else if (sortBy === "name-desc") {
+            data.sort((a, b) => b.Name.localeCompare(a.Name));
+        }
+
+        const resultsWithFavorites = data.map(place => ({
+            ...place,
+            isFavorite: favorites.includes(place.id),
+        }));
+        setResults(resultsWithFavorites);
+    };
+
+    // ================================
+    // FETCH AND MERGE FAVORITES
+    // ================================
+    const loadFavorites = async () => {
+        if (!user?.email) {
+            setFavorites([]);
+            return;
+        }
+        const favIds = await fetchUserFavorites(user.email);
+        setFavorites(favIds);
+    };
+
+    const handleToggleFavorite = async (placeId) => {
+        if (!user?.email) {
+            console.warn('User not logged in');
+            return;
+        }
+        const isAlreadyFavorite = favorites.includes(placeId);
+        try {
+            await toggleFavorite(placeId, user.email, isAlreadyFavorite);
+            setFavorites(prev =>
+                isAlreadyFavorite
+                    ? prev.filter(id => id !== placeId)
+                    : [...prev, placeId]
+            );
+        } catch (error) {
+            console.error('Failed to toggle favorite:', error);
+        }
+    };
+
+    // RUN FILTERS WHEN ANY FILTER CHANGES
+    useEffect(() => {
+        fetchFilteredPlaces();
+    }, [searchTerm, category, region, rating, hasReviewsOnly, sortBy, favorites]);
+
+    // FETCH FAVORITES WHEN USER CHANGES
+    useEffect(() => {
+        loadFavorites();
+    }, [user?.email]);
+
+    // FETCH DROPDOWN OPTIONS ON PAGE LOAD
+    useEffect(() => {
+        fetchCategories();
+        fetchRegions();
+    }, []);
 
     return (
         <div className="search-container page-content">
             <div className="search-layout-wrapper">
-                {/* LEFT SIDEBAR FILTERS */}
+                
+                {/* ================= LEFT FILTERS SIDEBAR ================= */}
                 <aside className="filters-card">
                     <h2 className="filters-title">Filters</h2>
 
+                    {/* SEARCH INPUT */}
                     <div className="filter-group">
                         <label className="filter-label">Search by name</label>
                         <input
@@ -200,6 +345,7 @@ const Search = ({ locations = [] }) => {
                         />
                     </div>
 
+                    {/* CATEGORY DROPDOWN */}
                     <div className="filter-group">
                         <label className="filter-label">Category</label>
                         <select
@@ -207,14 +353,15 @@ const Search = ({ locations = [] }) => {
                             onChange={(e) => setCategory(e.target.value)}
                             className="filter-select"
                         >
-                            {CATEGORY_OPTIONS.map((cat) => (
-                                <option key={cat} value={cat === "All" ? "" : cat}>
+                            {categories.map((cat) => (
+                                <option key={cat} value={cat}>
                                     {cat}
                                 </option>
                             ))}
                         </select>
                     </div>
 
+                    {/* REGION DROPDOWN */}
                     <div className="filter-group">
                         <label className="filter-label">Region</label>
                         <select
@@ -222,14 +369,15 @@ const Search = ({ locations = [] }) => {
                             onChange={(e) => setRegion(e.target.value)}
                             className="filter-select"
                         >
-                            {REGION_OPTIONS.map((reg) => (
-                                <option key={reg} value={reg === "All" ? "" : reg}>
+                            {regions.map((reg) => (
+                                <option key={reg} value={reg}>
                                     {reg}
                                 </option>
                             ))}
                         </select>
                     </div>
 
+                    {/* RATING FILTER */}
                     <div className="filter-group">
                         <label className="filter-label">Rating</label>
                         <select
@@ -237,14 +385,14 @@ const Search = ({ locations = [] }) => {
                             onChange={(e) => setRating(e.target.value)}
                             className="filter-select"
                         >
-                            {RATING_OPTIONS.map((rat) => (
-                                <option key={rat} value={rat === "Any" ? "" : rat.slice(0, -1)}>
-                                    {rat}
-                                </option>
-                            ))}
+                            <option value="Any">Any</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                            <option value="4.5">4.5+</option>
                         </select>
                     </div>
 
+                    {/* HAS REVIEWS ONLY */}
                     <div className="filter-group checkbox-group">
                         <label className="checkbox-label">
                             <input
@@ -256,14 +404,14 @@ const Search = ({ locations = [] }) => {
                             <span>Has reviews only</span>
                         </label>
                     </div>
-
-                    <button className="filters-button">Apply Filters</button>
                 </aside>
 
-                {/* RIGHT SIDE RESULTS */}
+                {/* ================= RIGHT RESULTS LIST ================= */}
                 <main className="results-section">
                     <div className="results-header">
-                        <h3 className="results-count">{filtered.length} Results</h3>
+                        <h3 className="results-count">{results.length} Results</h3>
+
+                        {/* SORTING */}
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
@@ -274,18 +422,53 @@ const Search = ({ locations = [] }) => {
                         </select>
                     </div>
 
-                    {filtered.length > 0 ? (
+                    {/* RESULTS */}
+                    {results.length > 0 ? (
                         <div className="results-list">
-                            {filtered.map((loc) => (
-                                <div key={loc.id} className="results-card">
-                                    <h3 className="result-title">{loc.name}</h3>
-                                    <p className="result-category">{loc.placeType || "Not specified"}</p>
-                                    {loc.description && (
-                                        <p className="result-description">{loc.description}</p>
+                            {results.map((loc) => (
+                                <div key={loc.id} className="results-card" style={{ position: 'relative' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <h3 className="result-title">{loc.Name}</h3>
+                                            <p className="result-category">{loc.PlaceType || "Not specified"}</p>
+
+                                            {loc.Description && (
+                                                <p className="result-description">{loc.Description}</p>
+                                            )}
+
+                                            <span className="result-coords">
+                                                {loc.Latitude?.toFixed(4)}, {loc.Longitude?.toFixed(4)}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleToggleFavorite(loc.id);
+                                            }}
+                                            style={{
+                                                fontSize: '24px',
+                                                color: loc.isFavorite ? '#FFD700' : '#999',
+                                                cursor: 'pointer',
+                                                background: 'none',
+                                                border: 'none',
+                                                padding: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                minWidth: '44px',
+                                                minHeight: '44px',
+                                            }}
+                                            title={loc.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                                        >
+                                            {loc.isFavorite ? '★' : '☆'}
+                                        </button>
+                                    </div>
+
+                                    {loc.avg_rating > 0 && (
+                                        <p className="result-rating">
+                                            ⭐ {loc.avg_rating.toFixed(1)} ({loc.review_count})
+                                        </p>
                                     )}
-                                    <span className="result-coords">
-                                        {loc.latitude.toFixed(4)}, {loc.longitude.toFixed(4)}
-                                    </span>
                                 </div>
                             ))}
                         </div>

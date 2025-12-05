@@ -20,6 +20,14 @@ if (result.error) {
   console.log('📋 Loaded variables count:', Object.keys(result.parsed || {}).length);
 }
 
+console.log('\n🔐 ENV CHECK (before imports):', {
+  SUPABASE_URL: process.env.SUPABASE_URL || '❌ MISSING',
+  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ? '✅ SET' : '❌ MISSING',
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ SET' : '❌ MISSING',
+  PORT: process.env.PORT || '❌ MISSING',
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? '✅ SET' : '❌ MISSING'
+});
+
 import express from 'express';
 import cors from 'cors';
 import authRouter from './routes/auth.js';
@@ -29,14 +37,6 @@ import placesRouter from './routes/places.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
-console.log('\n🔐 ENV CHECK:', {
-  SUPABASE_URL: process.env.SUPABASE_URL || '❌ MISSING',
-  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ? '✅ SET' : '❌ MISSING',
-  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ SET' : '❌ MISSING',
-  PORT: process.env.PORT || '❌ MISSING',
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? '✅ SET' : '❌ MISSING'
-});
 
 const allowedOrigins = [
   'http://localhost:5173',
@@ -61,6 +61,12 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  next();
+});
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });

@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getReviewsByLocation, addReview } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { toggleFavorite } from '../services/favorites';
 import StarRating from './StarRating';
 
 const formatDate = (value) => {
@@ -9,11 +10,12 @@ const formatDate = (value) => {
   return new Date(value).toLocaleString();
 };
 
-const LocationPanel = ({ location, onClose }) => {
+const LocationPanel = ({ location, onClose, expandedFromPopup }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [formState, setFormState] = useState({ rating: 5, comment: '' });
-  const [showMore, setShowMore] = useState(false);
+  const [showMore, setShowMore] = useState(expandedFromPopup || false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
 
   const locationId = location?.id;
@@ -74,6 +76,21 @@ const LocationPanel = ({ location, onClose }) => {
     mutation.mutate(formState);
   };
 
+  const handleToggleFavorite = async () => {
+    if (!user?.email) {
+      console.warn('User not logged in');
+      return;
+    }
+    if (!locationId) return;
+
+    try {
+      await toggleFavorite(locationId, user.email, isFavorite);
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+    }
+  };
+
   const description = location.description || '';
   const shortDescription = description.length > 120
     ? description.slice(0, 120) + "..."
@@ -81,8 +98,8 @@ const LocationPanel = ({ location, onClose }) => {
 
   // Reset showMore when location changes
   useEffect(() => {
-    setShowMore(false);
-  }, [location?.id]);
+    setShowMore(expandedFromPopup || false);
+  }, [location?.id, expandedFromPopup]);
 
   return (
     <aside className="location-panel">
@@ -91,16 +108,35 @@ const LocationPanel = ({ location, onClose }) => {
           <h2>{location.name}</h2>
           <p className="subtle-text">{formatDate(location.created_at)}</p>
         </div>
-        <button className="panel-close" onClick={onClose} aria-label="Close panel">
-          ×
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={handleToggleFavorite}
+            style={{
+              fontSize: '24px',
+              color: isFavorite ? '#FFD700' : '#999',
+              cursor: 'pointer',
+              background: 'none',
+              border: 'none',
+              padding: '4px 8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            {isFavorite ? '★' : '☆'}
+          </button>
+          <button className="panel-close" onClick={onClose} aria-label="Close panel">
+            ×
+          </button>
+        </div>
       </header>
 
       <section>
         <p className="modal-description">
           {showMore ? description : shortDescription}
         </p>
-        {description.length > 120 && (
+        {description.length > 120 && !expandedFromPopup && (
           <button
             className="show-more-btn"
             onClick={() => setShowMore(!showMore)}

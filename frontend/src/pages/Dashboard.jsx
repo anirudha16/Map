@@ -350,6 +350,7 @@ const Dashboard = () => {
                   <LocationPanel
                     location={selectedLocation}
                     onClose={() => setSelectedLocation(null)}
+                    expandedFromPopup={selectedLocation?.expandedFromPopup}
                   />
                 </div>
               )}

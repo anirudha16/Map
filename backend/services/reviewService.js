@@ -1,6 +1,5 @@
-import { supabase } from "../utils/supabaseClient.js";
-
 export const getReviewsByLocation = async (locationId) => {
+  const { supabase } = await import("../utils/supabaseClient.js");
   const { data, error } = await supabase
     .from("reviews")
     .select("id, rating, comment, created_at, user_email, user_name")
@@ -11,6 +10,7 @@ export const getReviewsByLocation = async (locationId) => {
 };
 
 export const addReview = async ({ locationId, rating, comment, user_email, user_name }) => {
+  const { supabase } = await import("../utils/supabaseClient.js");
   const { data, error } = await supabase
     .from('reviews')
     .insert({

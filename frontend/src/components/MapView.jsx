@@ -469,7 +469,7 @@ const MapView = ({
             // Attach Show More button
             setTimeout(() => {
               const btn = document.getElementById(`showMore-${p.id}`);
-              if (btn) btn.onclick = () => onMarkerClick(locationData);
+              if (btn) btn.onclick = () => onMarkerClick({ ...locationData, expandedFromPopup: true });
             }, 50);
           });
 

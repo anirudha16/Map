@@ -92,12 +92,16 @@ const Profile = () => {
         )}&background=4F46E5&color=fff&size=128&bold=true`;
 
     // ===================================================
-    // Load Profile, Reviews, Favourites
+    // Helper Functions
     // ===================================================
-    useEffect(() => {
-        if (!user) return;
-        loadProfileData();
-    }, [user]);
+    const fetchReviewCount = async (email) => {
+        const { count } = await supabase
+            .from("reviews")
+            .select("*", { count: "exact", head: true })
+            .eq("user_email", email);
+
+        setReviewCount(count || 0);
+    };
 
     const loadProfileData = async () => {
         setLoading(true);
@@ -111,24 +115,44 @@ const Profile = () => {
 
         setProfile(profileData);
 
-        // 2️⃣ Reviews Count + List
-        const { count: reviewsCount, data: reviewsList } = await supabase
-            .from("reviews")
-            .select("*", { count: "exact" })
-            .eq("user_id", user.id);
+        // 2️⃣ Reviews Count
+        await fetchReviewCount(user.email);
 
-        setReviewCount(reviewsCount || 0);
+        // 3️⃣ Reviews List
+        const { data: reviewsList } = await supabase
+            .from("reviews")
+            .select("*")
+            .eq("user_email", user.email);
+
         setReviews(reviewsList || []);
 
-        // 3️⃣ Favourites
-        const { data: favData } = await supabase
+        // 4️⃣ Favourites
+        const { data: favoritesData } = await supabase
             .from("favorites")
-            .select("place_id, places(name, description)")
-            .eq("user_id", user.id);
+            .select("place_id")
+            .eq("user_email", user.email);
 
-        setFavorites(favData || []);
+        if (favoritesData && favoritesData.length > 0) {
+            const placeIds = favoritesData.map(fav => fav.place_id);
+            const { data: placesData } = await supabase
+                .from("places")
+                .select("*")
+                .in("id", placeIds);
+            setFavorites(placesData || []);
+        } else {
+            setFavorites([]);
+        }
+
         setLoading(false);
     };
+
+    // ===================================================
+    // Load Profile, Reviews, Favourites
+    // ===================================================
+    useEffect(() => {
+        if (!user) return;
+        loadProfileData();
+    }, [user]);
 
     // ===================================================
     // Avatar Upload
@@ -218,11 +242,11 @@ const Profile = () => {
                         <p>No favourite places yet.</p>
                     ) : (
                         <div style={styles.favGrid}>
-                            {favorites.map((fav) => (
-                                <div key={fav.place_id} style={styles.favCard}>
-                                    <h4>{fav.places?.name}</h4>
+                            {favorites.map((place) => (
+                                <div key={place.id} style={styles.favCard}>
+                                    <h4>{place.Name}</h4>
                                     <p style={{ color: "#555" }}>
-                                        {fav.places?.description || "No description"}
+                                        {place.Description || "No description"}
                                     </p>
                                 </div>
                             ))}

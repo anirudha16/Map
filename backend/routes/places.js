@@ -1,10 +1,10 @@
 import express from "express";
-import { supabase } from "../utils/supabaseClient.js";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
+    const { supabase } = await import("../utils/supabaseClient.js");
     const min_lon = Number(req.query.minLon ?? -180);
     const min_lat = Number(req.query.minLat ?? -90);
     const max_lon = Number(req.query.maxLon ?? 180);
@@ -43,6 +43,7 @@ router.get("/bbox", async (req, res) => {
   console.log("📦 BBOX incoming:", { minLon, minLat, maxLon, maxLat, zoom });
 
   try {
+    const { supabase } = await import("../utils/supabaseClient.js");
     const min_lon = Number(minLon);
     const min_lat = Number(minLat);
     const max_lon = Number(maxLon);

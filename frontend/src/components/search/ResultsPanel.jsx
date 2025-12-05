@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ResultsPanel = ({ isLoading, isError, data, sort, onSortChange }) => {
+const ResultsPanel = ({ isLoading, isError, data, sort, onSortChange, onToggleFavorite }) => {
     if (isLoading) {
         return (
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
@@ -170,32 +170,56 @@ const ResultsPanel = ({ isLoading, isError, data, sort, onSortChange }) => {
                                     </div>
                                 </div>
 
-                                {(place.average_rating || place.review_count) && (
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 'var(--space-xs)' }}>
-                                        {place.average_rating && (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 'var(--space-xs)' }}>
+                                    {onToggleFavorite && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onToggleFavorite(place.id);
+                                            }}
+                                            style={{
+                                                fontSize: '24px',
+                                                color: place.isFavorite ? '#FFD700' : '#999',
+                                                cursor: 'pointer',
+                                                background: 'none',
+                                                border: 'none',
+                                                padding: '4px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                            title={place.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                                        >
+                                            {place.isFavorite ? '★' : '☆'}
+                                        </button>
+                                    )}
+                                    {(place.average_rating || place.review_count) && (
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 'var(--space-xs)' }}>
+                                            {place.average_rating && (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
+                                                    <span style={{
+                                                        fontSize: 'var(--font-size-lg)',
+                                                        fontWeight: 'var(--font-weight-bold)',
+                                                        color: 'var(--text-dark)'
+                                                    }}>
+                                                        {place.average_rating.toFixed(1)}
+                                                    </span>
+                                                    <svg style={{ width: '16px', height: '16px', fill: '#F59E0B' }} viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                            {place.review_count > 0 && (
                                                 <span style={{
-                                                    fontSize: 'var(--font-size-lg)',
-                                                    fontWeight: 'var(--font-weight-bold)',
-                                                    color: 'var(--text-dark)'
+                                                    fontSize: 'var(--font-size-xs)',
+                                                    color: 'var(--text-light)'
                                                 }}>
-                                                    {place.average_rating.toFixed(1)}
+                                                    {place.review_count} {place.review_count === 1 ? 'review' : 'reviews'}
                                                 </span>
-                                                <svg style={{ width: '16px', height: '16px', fill: '#F59E0B' }} viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                </svg>
-                                            </div>
-                                        )}
-                                        {place.review_count > 0 && (
-                                            <span style={{
-                                                fontSize: 'var(--font-size-xs)',
-                                                color: 'var(--text-light)'
-                                            }}>
-                                                {place.review_count} {place.review_count === 1 ? 'review' : 'reviews'}
-                                            </span>
-                                        )}
-                                    </div>
-                                )}
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ))}
