@@ -3,9 +3,10 @@ import L from "leaflet";
 const createIcon = (name) =>
   L.icon({
     iconUrl: `/icons/${name}.svg`,
-    iconSize: [26, 26],
-    iconAnchor: [13, 13],
-    popupAnchor: [0, -13],
+    iconSize: [16, 16],
+    iconAnchor: [8, 16],
+    popupAnchor: [0, -22],
+    tooltipAnchor: [0, -2],
     className: "map-icon",
   });
 

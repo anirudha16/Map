@@ -287,6 +287,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { getPlacesInBBox } from '../services/api';   // <-- IMPORTANT: update API
 import { iconMap, mapArabicToCategory } from '../utils/iconMap';
+import MapHeightControl from './MapHeightControl';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -405,47 +406,85 @@ const MapView = ({
           const lon = p.Longitude;
 
           // 1. Create main marker
-          const marker = L.marker([lat, lon], { icon })
-            .on("click", () => onMarkerClick(locationData));
+          const marker = L.marker([lat, lon], { icon });
 
-          marker.bindPopup(p.Name);
+          // Build responsive Arabic tooltip
+          const tooltipHtml = `
+  <div style="
+    padding: 8px 10px;
+    direction: rtl;
+    text-align: right;
+    max-width: 220px;
+    font-family: system-ui, sans-serif;
+  ">
 
-          // Add Arabic label using tooltip if zoom >= 9
-          if (currentZoom >= 9) {
-            const arabicCategory = p.PlaceType; // Assuming PlaceType is already in Arabic or the desired display text
+    <div style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">
+      ${p.Name}
+    </div>
 
-            const labelHtml = `
-              <div style="
-                text-align:center;
-                direction: rtl;
-                line-height:1.1;
-                color: #333;
-                text-shadow: 0 1px 2px rgba(255,255,255,0.8);
-              ">
-                <div style="font-weight:600; font-size:14px;">
-                  ${p.Name}
-                </div>
-                <div style="font-size:12px; opacity:0.85;">
-                  (${arabicCategory})
-                </div>
-              </div>
-            `;
+    <div style="
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 8px;
+      line-height: 1.4;
+      max-height: 50px;
+      overflow: hidden;
+    ">
+      ${(p.Description || "").slice(0, 90)}...
+    </div>
 
-            marker.bindTooltip(labelHtml, {
-              permanent: true,
-              direction: "bottom", // Changed to bottom to appear under the marker as requested ("centered under the marker icon" implies below usually, but user said "direction: top" in code snippet but "under" in text. "bottom" puts it below the marker. I will use "bottom" to match "under" description, or "top" if they want it above. Wait, user code snippet says "top". But text says "under". Usually "top" puts tooltip ABOVE marker. "bottom" puts it BELOW. I will stick to "bottom" to match "under the marker" requirement, but if user insists on code snippet I might need to check. Actually, Leaflet "top" tooltip is above the point. "bottom" is below. I'll use "bottom" and add offset to ensure it doesn't overlap.)
-              // User request said: "Tooltip must be always visible... Make sure the tooltip remains directly under the marker".
-              // User code snippet: direction: "top".
-              // This is contradictory. "top" places tooltip ABOVE the marker. "bottom" places it BELOW.
-              // I will follow the TEXT requirement "under the marker" -> direction: "bottom".
-              // And I'll add a small offset to clear the icon.
-              direction: "bottom",
-              offset: [0, 10],
-              opacity: 1,
-              className: "custom-marker-label",
-            });
-          }
+    <button 
+      id="showMore-${p.id}"
+      style="
+        background: #6C63FF;
+        border: none;
+        padding: 5px 12px;
+        color: white;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        width: 100px;
+      "
+    >
+      Show More
+    </button>
+  </div>
+`;
 
+          // Tooltip on hover only
+          marker.bindTooltip(tooltipHtml, {
+            direction: "top",
+            opacity: 0.97,
+            className: "hover-info-tooltip",
+            interactive: true,
+            sticky: true,       // <-- SUPER IMPORTANT
+            permanent: false,
+          });
+
+
+          // Prevent click on marker from opening sidebar
+          marker.off("click");
+
+          marker.on("tooltipopen", () => {
+            // Disable dragging so movestart will NOT fire
+            map.dragging.disable();
+
+            const btn = document.getElementById(`showMore-${p.id}`);
+            if (btn) {
+              btn.onclick = () => {
+                onMarkerClick(locationData);
+                map.dragging.enable(); // re-enable after click
+              };
+            }
+          });
+
+          marker.on("tooltipclose", () => {
+            // Re-enable map dragging when tooltip closes
+            map.dragging.enable();
+          });
+
+
+          // Add marker to map layer
           markersLayerRef.current.addLayer(marker);
         });
 
@@ -454,8 +493,12 @@ const MapView = ({
       }
     }
 
+    map.on("movestart", () => {
+      markersLayerRef.current?.clearLayers();
+    });
+
     // Load when map moves or zooms
-    map.on("moveend", loadPlacesInsideBox);
+    // map.on("moveend", loadPlacesInsideBox);
     map.on("zoomend", loadPlacesInsideBox);
 
     // Initial fetch
@@ -484,6 +527,7 @@ const MapView = ({
       style={{ height: '100%', width: '100%' }}
     >
       <MapController onMapReady={handleMapReady} />
+      <MapHeightControl mapRef={mapRef} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -1,22 +1,34 @@
-/* Import Premium Theme System */
+/* ====================================================== */
+/* SOFT PURPLE MODERN THEME — FULL INDEX.CSS REPLACEMENT  */
+/* ====================================================== */
+
 @import './theme.css';
 
-/* Additional Global Styles */
+/* -------------------------------------- */
+/* GLOBAL                                 */
+/* -------------------------------------- */
+
 #root {
   min-height: 100vh;
+  background: #f8f6ff;
+  font-family: var(--font-family);
+  color: #2c2c38;
 }
 
 a {
-  color: var(--primary);
+  color: #7c5cff;
   text-decoration: none;
-  transition: color var(--transition-base);
+  transition: 0.3s ease;
 }
 
 a:hover {
-  color: var(--primary-dark);
+  color: #5d3efc;
 }
 
-/* Leaflet Tooltip Styling */
+/* -------------------------------------- */
+/* LEAFLET MAP (unchanged)                */
+/* -------------------------------------- */
+
 .leaflet-tooltip.arabic-label {
   direction: rtl;
   text-align: center;
@@ -30,13 +42,12 @@ a:hover {
   color: var(--text-dark);
 }
 
-/* Leaflet Map Adjustments */
 .leaflet-container {
   font-family: var(--font-family);
 }
 
 .leaflet-popup-content-wrapper {
-  border-radius: var(--radius);
+  border-radius: 14px;
   box-shadow: var(--shadow);
 }
 
@@ -44,22 +55,706 @@ a:hover {
   box-shadow: var(--shadow-sm);
 }
 
-/* Custom Marker Label - Transparent Tooltip */
 .custom-marker-label {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
-  margin: 0 !important;
   pointer-events: none;
 }
 
-.custom-marker-label div {
-  white-space: nowrap;
+/* -------------------------------------- */
+/* LOGIN / SIGNUP (Split Layout)          */
+/* -------------------------------------- */
+
+.auth-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100%;
 }
 
-/* Ensure the tooltip content is visible */
-.leaflet-tooltip-bottom.custom-marker-label::before {
-  display: none !important;
-  /* Hide the tooltip arrow */
+/* LEFT SIDE - PURPLE GRADIENT */
+.auth-left {
+  width: 50%;
+  background: linear-gradient(135deg, #6d5dfc, #9b87ff);
+  color: white;
+  padding: 80px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+
+.brand-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+.brand-tagline {
+  font-size: 20px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 24px;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.brand-description {
+  font-size: 16px;
+  color: white;
+  margin-top: 28px;
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+.feature-list {
+  margin-top: 28px;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.feature-list li {
+  font-size: 16px;
+  margin-bottom: 14px;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+}
+
+/* RIGHT SIDE FORM */
+.auth-right {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.auth-card {
+  width: 580px;
+  padding: 50px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.auth-card h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c2c38;
+  margin: 0 0 16px 0;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.auth-card .subtle-text {
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: 15px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-card label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 14px 14px;
+  border-radius: 10px;
+  margin-bottom: 22px;
+  border: 1px solid #e2ddff;
+  background: #f7f5ff;
+  font-size: 15px;
+  transition: 0.2s ease;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #7c5dff;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(124, 93, 255, 0.1);
+}
+
+.auth-card button {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6d5dfc, #8b77ff);
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  margin-bottom: 28px;
+  transition: 0.3s ease;
+}
+
+.auth-card button:hover {
+  opacity: 0.92;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109, 93, 252, 0.3);
+}
+
+.auth-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-card > p:last-child {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.auth-card > p:last-child a {
+  color: #7c5cff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-card > p:last-child a:hover {
+  color: #5d3efc;
+  text-decoration: underline;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .auth-wrapper {
+    flex-direction: column;
+  }
+
+  .auth-left,
+  .auth-right {
+    width: 100%;
+  }
+
+  .auth-card {
+    width: 90%;
+    max-width: 500px;
+  }
+}
+
+/* -------------------------------------- */
+/* MAIN HEADER — SOFT PURPLE              */
+/* -------------------------------------- */
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 86px;
+  width: 100%;
+  padding: 0 32px;
+  background: linear-gradient(135deg, #6d5dfc, #8f7bff);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.27);
+  backdrop-filter: blur(6px);
+  color: white;
+}
+
+/* -------------------------------------- */
+/* FLOATING TABS — SOFT PURPLE            */
+/* -------------------------------------- */
+
+.app-tabs {
+  position: fixed;
+  top: 86px;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ece8ff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  z-index: 999;
+}
+
+.app-tab-btn {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  border-radius: 10px;
+  color: #7b7292;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.app-tab-btn:hover {
+  background: #f1ecff;
+}
+
+.app-tab-btn.active {
+  background: #e5dbff;
+  color: #6d5dfc;
+  font-weight: 600;
+}
+
+/* Push entire page content down */
+.page-content {
+  padding-top: 160px;
+}
+
+/* Compact page content with minimal spacing */
+.page-content-compact {
+  padding-top: 16px;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* -------------------------------------- */
+/* MAP WRAPPER                            */
+/* -------------------------------------- */
+
+/* HOME LAYOUT — make map + sidebar fill viewport height */
+.home-map-layout {
+  display: flex;
+  gap: 24px;
+  padding: 0 32px 24px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 160px);
+}
+
+/* Left side (map area) */
+.home-map-area {
+  flex: 3;
+  display: flex;
+}
+
+/* Right side (location / review panel container) */
+.home-sidebar {
+  flex: 2;
+  display: flex;
+}
+
+/* Card that wraps the Leaflet map */
+.map-wrapper {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s ease;
+  width: 100%;
+  height: auto;
+}
+
+.map-wrapper.map-minimized {
+  width: 70%;
+  height: 250px;
+  margin: 0 auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.map-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.map-wrapper.map-minimized::after {
+  opacity: 1;
+}
+
+/* Leaflet map should always fill the wrapper */
+.map-wrapper .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* --------------------------------------------------------- */
+/* SEARCH PAGE — FILTERS + RESULTS (PLAIN CSS)                */
+/* --------------------------------------------------------- */
+
+.search-container {
+  width: 95%;
+  margin: 0 auto;
+  max-width: 1600px;
+  min-height: calc(100vh - 200px);
+}
+
+.search-layout-wrapper {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+}
+
+/* LEFT FILTERS PANEL (25%) */
+.filters-card {
+  width: 25%;
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+  flex-shrink: 0;
+}
+
+.filters-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c2c38;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.filter-input,
+.filter-select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2ddff;
+  background: #fafaff;
+  font-size: 14px;
+  color: #2c2c38;
+  transition: 0.2s ease;
+  font-family: inherit;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #7c5dff;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(124, 93, 255, 0.1);
+}
+
+.filter-input::placeholder {
+  color: #999;
+}
+
+.filters-button {
+  width: 100%;
+  background: linear-gradient(135deg, #6d5dfc, #7c5dff);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.2s ease;
+  font-size: 14px;
+}
+
+.filters-button:hover {
+  background: linear-gradient(135deg, #5d4dfc, #6d4dff);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 93, 255, 0.25);
+}
+
+.filters-button:active {
+  transform: translateY(0);
+}
+
+.checkbox-group {
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #2c2c38;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+.checkbox-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #7c5dff;
+}
+
+/* RIGHT RESULTS PANEL (75%) */
+.results-section {
+  flex: 1;
+  width: 75%;
+}
+
+.results-header {
+  background: white;
+  padding: 18px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.results-count {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c2c38;
+  margin: 0;
+}
+
+.sort-dropdown {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2ddff;
+  background: #fafaff;
+  font-size: 13px;
+  color: #2c2c38;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.sort-dropdown:hover {
+  border-color: #7c5dff;
+  background: white;
+}
+
+.sort-dropdown:focus {
+  outline: none;
+  border-color: #7c5dff;
+  box-shadow: 0 0 0 3px rgba(124, 93, 255, 0.1);
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.results-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: 0.2s ease;
+  border: 1px solid #f0ecff;
+}
+
+.results-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-color: #e5dbff;
+}
+
+.result-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #2c2c38;
+  margin: 0 0 8px 0;
+}
+
+.result-category {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7c5dff;
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.result-description {
+  font-size: 14px;
+  color: #666;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.result-coords {
+  display: inline-block;
+  font-size: 12px;
+  background: linear-gradient(135deg, #f0ecff, #f5f0ff);
+  color: #6d5dfc;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-weight: 500;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.results-empty {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  color: #999;
+  font-size: 15px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .search-layout-wrapper {
+    gap: 20px;
+  }
+
+  .filters-card {
+    width: 28%;
+  }
+
+  .results-section {
+    width: 72%;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-layout-wrapper {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .filters-card {
+    width: 100%;
+  }
+
+  .results-section {
+    width: 100%;
+  }
+
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .sort-dropdown {
+    width: 100%;
+  }
+}
+
+/* -------------------------------------- */
+/* PROFILE PAGE                           */
+/* -------------------------------------- */
+
+.profile-tab-container {
+  margin-top: 40px;
+}
+
+.profile-wrapper {
+  margin-top: 0 !important;
+  padding-top: 30px;
+}
+
+.profile-container {
+  padding: 20px;
+}
+
+.material-card {
+  padding: 20px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* Activity + Favorites Cards */
+.activity-card,
+.fav-card {
+  padding: 16px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 12px;
+}
+
+/* Sidebar Purple Highlight */
+.sidebar-active {
+  background: #6d5dfc !important;
+  color: white !important;
+}
+
+.sidebar-default {
+  background: #f3efff;
+  color: #4b4376;
+}
+
+/* Favorites Grid */
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+/* Right review panel same height as map, scroll if content is tall */
+.location-panel {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+

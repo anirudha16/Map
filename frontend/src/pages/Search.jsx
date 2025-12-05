@@ -1,90 +1,297 @@
-import { useState, useMemo } from 'react';
 
-const ARABIC_CATEGORIES = [
-    "بئر", "بحر", "بحيرة", "جبل", "جزيرة", "حصن", "حي", "خليج", "رأس", "رمال",
-    "ساحل", "سبخة", "سد", "سوق", "سهل", "طريق", "عين", "غابة", "قناة", "قرية",
-    "قلعة", "مخيم", "مدينة", "مرعى", "مزرعة", "مسجد", "مطعم", "ممر بين الرمال",
-    "مملحة", "منخفض صحراوي", "منزل", "مورد مياه", "موضع", "وادي", "هضبة"
+// import { useState, useMemo } from "react";
+
+// const ARABIC_CATEGORIES = [
+//     "بئر", "بحر", "بحيرة", "جبل", "جزيرة", "حصن", "حي", "خليج", "رأس", "رمال",
+//     "ساحل", "سبخة", "سد", "سوق", "سهل", "طريق", "عين", "غابة", "قناة", "قرية",
+//     "قلعة", "مخيم", "مدينة", "مرعى", "مزرعة", "مسجد", "مطعم", "ممر بين الرمال",
+//     "مملحة", "منخفض صحراوي", "منزل", "مورد مياه", "موضع", "وادي", "هضبة"
+// ];
+
+// const Search = ({ locations = [] }) => {
+//     const [searchTerm, setSearchTerm] = useState("");
+//     const [selectedCategory, setSelectedCategory] = useState("");
+
+//     const filteredLocations = useMemo(() => {
+//         return locations.filter((location) => {
+//             const matchesSearch =
+//                 location.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//                 location.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+//             const matchesCategory = selectedCategory
+//                 ? location.placeType === selectedCategory
+//                 : true;
+
+//             return matchesSearch && matchesCategory;
+//         });
+//     }, [locations, searchTerm, selectedCategory]);
+
+//     return (
+//         <div className="search-container page-content">
+//             {/* MAIN SEARCH BAR */}
+//             <div className="search-card">
+//                 <label>Search by name</label>
+//                 <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
+//                     <input
+//                         type="text"
+//                         className="search-input-main"
+//                         placeholder="Try 'Central Park'"
+//                         value={searchTerm}
+//                         onChange={(e) => setSearchTerm(e.target.value)}
+//                     />
+
+//                     <button className="search-btn-main">Search</button>
+//                 </div>
+//             </div>
+
+//             {/* FILTERS + RESULTS LAYOUT */}
+//             <div className="search-layout">
+//                 {/* LEFT FILTER PANEL */}
+//                 <aside className="filter-card">
+//                     <label>Search by name</label>
+//                     <input
+//                         className="filter-input"
+//                         placeholder="Enter place name…"
+//                         value={searchTerm}
+//                         onChange={(e) => setSearchTerm(e.target.value)}
+//                     />
+
+//                     <div style={{ marginTop: "20px" }}>
+//                         <label>Category</label>
+//                         <select
+//                             className="filter-select"
+//                             value={selectedCategory}
+//                             onChange={(e) => setSelectedCategory(e.target.value)}
+//                         >
+//                             <option value="">All</option>
+//                             {ARABIC_CATEGORIES.map((cat) => (
+//                                 <option key={cat} value={cat}>
+//                                     {cat}
+//                                 </option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     <button className="apply-btn">Apply Filters</button>
+//                     <button className="reset-btn" onClick={() => {
+//                         setSearchTerm("");
+//                         setSelectedCategory("");
+//                     }}>
+//                         Reset
+//                     </button>
+//                 </aside>
+
+//                 {/* RESULTS PANEL */}
+//                 <main className="results-panel">
+//                     <div className="results-header-box">
+//                         <div className="results-count">
+//                             {filteredLocations.length} Results
+//                         </div>
+
+//                         <select className="sort-select">
+//                             <option>Name (A–Z)</option>
+//                             <option>Name (Z–A)</option>
+//                         </select>
+//                     </div>
+
+//                     {/* RESULTS LIST */}
+//                     {filteredLocations.length > 0 ? (
+//                         filteredLocations.map((location) => (
+//                             <div key={location.id} className="result-card">
+//                                 <div>
+//                                     <div className="result-title">{location.name}</div>
+//                                     <div className="result-coords">
+//                                         {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+//                                     </div>
+//                                     {location.description && (
+//                                         <div className="result-description">
+//                                             {location.description}
+//                                         </div>
+//                                     )}
+//                                 </div>
+//                             </div>
+//                         ))
+//                     ) : (
+//                         <div className="result-card">No matching results</div>
+//                     )}
+//                 </main>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default Search;
+import { useState, useMemo } from "react";
+
+const CATEGORY_OPTIONS = [
+    "All",
+    "City",
+    "Mountain",
+    "Valley",
+    "Village",
+    "Forest",
+    "Desert",
+    "Coast",
+    "Water source",
+    "Restaurant",
+    "Mosque",
+    "Hub"
+];
+
+const REGION_OPTIONS = [
+    "All",
+    "Central",
+    "North",
+    "South",
+    "East",
+    "West"
+];
+
+const RATING_OPTIONS = [
+    "Any",
+    "3+",
+    "4+",
+    "4.5+"
 ];
 
 const Search = ({ locations = [] }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [searchTerm, setSearchTerm] = useState("");
+    const [category, setCategory] = useState("");
+    const [region, setRegion] = useState("");
+    const [rating, setRating] = useState("");
+    const [hasReviewsOnly, setHasReviewsOnly] = useState(false);
+    const [sortBy, setSortBy] = useState("name-asc");
 
-    const filteredLocations = useMemo(() => {
-        return locations.filter((location) => {
-            const matchesSearch = location.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                location.description?.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesCategory = selectedCategory ? location.placeType === selectedCategory : true;
-            return matchesSearch && matchesCategory;
+    const filtered = useMemo(() => {
+        let result = locations.filter((loc) => {
+            const matchText =
+                loc.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                loc.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+            const matchCategory = category ? loc.placeType === category : true;
+            const matchRegion = region ? loc.region === region : true;
+            const matchRating = rating ? parseFloat(loc.rating || 0) >= parseFloat(rating) : true;
+            const matchReviews = hasReviewsOnly ? (loc.reviewCount || 0) > 0 : true;
+
+            return matchText && matchCategory && matchRegion && matchRating && matchReviews;
         });
-    }, [locations, searchTerm, selectedCategory]);
+
+        if (sortBy === "name-asc") result.sort((a, b) => a.name.localeCompare(b.name));
+        if (sortBy === "name-desc") result.sort((a, b) => b.name.localeCompare(a.name));
+
+        return result;
+    }, [locations, searchTerm, category, region, rating, hasReviewsOnly, sortBy]);
 
     return (
-        <div className="search-page" dir="rtl">
-            <div className="search-header">
-                <h2 className="text-2xl font-bold text-white mb-6">البحث المتقدم</h2>
-            </div>
+        <div className="search-container page-content">
+            <div className="search-layout-wrapper">
+                {/* LEFT SIDEBAR FILTERS */}
+                <aside className="filters-card">
+                    <h2 className="filters-title">Filters</h2>
 
-            <div className="search-layout flex flex-col md:flex-row gap-6">
-                {/* Filter Sidebar (25%) */}
-                <aside className="w-full md:w-1/4 bg-[#11121a] p-4 rounded-xl h-fit">
-                    <div className="filter-group mb-6">
-                        <label className="block text-gray-400 mb-2 text-sm">البحث بالاسم</label>
+                    <div className="filter-group">
+                        <label className="filter-label">Search by name</label>
                         <input
                             type="text"
+                            placeholder="Type a place name..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="أدخل اسم المكان..."
-                            className="w-full bg-[#060713] border border-[#212237] rounded-lg p-2 text-white focus:outline-none focus:border-[#5c7cfa]"
+                            className="filter-input"
                         />
                     </div>
 
                     <div className="filter-group">
-                        <label className="block text-gray-400 mb-2 text-sm">الفئة</label>
+                        <label className="filter-label">Category</label>
                         <select
-                            value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="w-full bg-[#060713] border border-[#212237] rounded-lg p-2 text-white focus:outline-none focus:border-[#5c7cfa]"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className="filter-select"
                         >
-                            <option value="">كل الفئات</option>
-                            {ARABIC_CATEGORIES.map((cat) => (
-                                <option key={cat} value={cat}>{cat}</option>
+                            {CATEGORY_OPTIONS.map((cat) => (
+                                <option key={cat} value={cat === "All" ? "" : cat}>
+                                    {cat}
+                                </option>
                             ))}
                         </select>
                     </div>
+
+                    <div className="filter-group">
+                        <label className="filter-label">Region</label>
+                        <select
+                            value={region}
+                            onChange={(e) => setRegion(e.target.value)}
+                            className="filter-select"
+                        >
+                            {REGION_OPTIONS.map((reg) => (
+                                <option key={reg} value={reg === "All" ? "" : reg}>
+                                    {reg}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="filter-group">
+                        <label className="filter-label">Rating</label>
+                        <select
+                            value={rating}
+                            onChange={(e) => setRating(e.target.value)}
+                            className="filter-select"
+                        >
+                            {RATING_OPTIONS.map((rat) => (
+                                <option key={rat} value={rat === "Any" ? "" : rat.slice(0, -1)}>
+                                    {rat}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="filter-group checkbox-group">
+                        <label className="checkbox-label">
+                            <input
+                                type="checkbox"
+                                checked={hasReviewsOnly}
+                                onChange={(e) => setHasReviewsOnly(e.target.checked)}
+                                className="checkbox-input"
+                            />
+                            <span>Has reviews only</span>
+                        </label>
+                    </div>
+
+                    <button className="filters-button">Apply Filters</button>
                 </aside>
 
-                {/* Results Area (75%) */}
-                <main className="w-full md:w-3/4">
-                    <div className="results-header mb-4 text-gray-400 text-sm">
-                        تم العثور على {filteredLocations.length} نتيجة
+                {/* RIGHT SIDE RESULTS */}
+                <main className="results-section">
+                    <div className="results-header">
+                        <h3 className="results-count">{filtered.length} Results</h3>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="sort-dropdown"
+                        >
+                            <option value="name-asc">Name (A–Z)</option>
+                            <option value="name-desc">Name (Z–A)</option>
+                        </select>
                     </div>
 
-                    <div className="results-grid grid grid-cols-1 gap-4">
-                        {filteredLocations.length > 0 ? (
-                            filteredLocations.map((location) => (
-                                <div key={location.id} className="result-card bg-[#11121a] p-4 rounded-xl flex justify-between items-center hover:bg-[#161725] transition-colors">
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-white">{location.name}</h3>
-                                        <p className="text-sm text-gray-400">{location.placeType || 'غير محدد'}</p>
-                                        {location.description && (
-                                            <p className="text-xs text-gray-500 mt-1 truncate max-w-md">{location.description}</p>
-                                        )}
-                                    </div>
-                                    <div className="text-left ltr">
-                                        <span className="text-xs text-[#5c7cfa] bg-[#5c7cfa1a] px-2 py-1 rounded">
-                                            {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-                                        </span>
-                                    </div>
+                    {filtered.length > 0 ? (
+                        <div className="results-list">
+                            {filtered.map((loc) => (
+                                <div key={loc.id} className="results-card">
+                                    <h3 className="result-title">{loc.name}</h3>
+                                    <p className="result-category">{loc.placeType || "Not specified"}</p>
+                                    {loc.description && (
+                                        <p className="result-description">{loc.description}</p>
+                                    )}
+                                    <span className="result-coords">
+                                        {loc.latitude.toFixed(4)}, {loc.longitude.toFixed(4)}
+                                    </span>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-10 text-gray-500 bg-[#11121a] rounded-xl">
-                                لا توجد نتائج مطابقة للبحث
-                            </div>
-                        )}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="results-empty">No matching results</div>
+                    )}
                 </main>
             </div>
         </div>

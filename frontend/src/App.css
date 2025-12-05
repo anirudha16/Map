@@ -223,7 +223,7 @@
 
 .map-wrapper {
   border-radius: 16px;
-  overflow: hidden;
+  overflow: visible !important;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-light);
   position: relative;
@@ -251,7 +251,9 @@
 .home-map-layout {
   display: flex;
   width: 100%;
-  height: calc(100vh - 350px);
+  flex-direction: column;
+  /* mobile default */
+  height: auto;
   min-height: 500px;
   gap: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -277,6 +279,22 @@
   overflow-y: auto;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.08);
   animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  .home-map-layout {
+    flex-direction: row;
+    height: calc(100vh - 350px);
+    /* adjust based on header+tab height */
+  }
+
+  .home-map-area {
+    height: 100%;
+  }
+
+  .home-sidebar {
+    height: 100%;
+  }
 }
 
 @keyframes slideInFromRight {
@@ -885,4 +903,35 @@ button:disabled {
   background: #FEE2E2;
   /* red-100 */
   transform: translateY(-1px);
+}
+
+.leaflet-tooltip.hover-info-tooltip {
+    pointer-events: auto !important;
+    z-index: 9999 !important; /* optional but recommended */
+}
+.leaflet-marker-pane {
+    z-index: 400 !important;
+}
+
+.leaflet-tooltip-pane {
+    z-index: 500 !important; /* tooltip stays above markers */
+}
+
+/* FORCE TOOLTIP TO THE VERY TOP ABOVE ALL LEAFLET PANES */
+.leaflet-tooltip-pane {
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+}
+
+.leaflet-pane,
+.leaflet-marker-pane,
+.leaflet-overlay-pane,
+.leaflet-shadow-pane {
+    z-index: 1 !important;
+}
+
+/* Make sure tooltip itself accepts hover and clicks */
+.leaflet-tooltip,
+.leaflet-tooltip.hover-info-tooltip {
+    pointer-events: auto !important;
 }

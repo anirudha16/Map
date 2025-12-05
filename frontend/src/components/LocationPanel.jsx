@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getReviewsByLocation, addReview } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import StarRating from './StarRating';
 
 const formatDate = (value) => {
   if (!value) return '—';
@@ -78,8 +79,13 @@ const LocationPanel = ({ location, onClose }) => {
     ? description.slice(0, 120) + "..."
     : description;
 
+  // Reset showMore when location changes
+  useEffect(() => {
+    setShowMore(false);
+  }, [location?.id]);
+
   return (
-    <aside className="location-panel" key={location.id}>
+    <aside className="location-panel">
       <header>
         <div>
           <h2>{location.name}</h2>
@@ -143,21 +149,13 @@ const LocationPanel = ({ location, onClose }) => {
 
       {user && !location.isVirtual ? (
         <form className="review-form" onSubmit={handleSubmit}>
-          <label htmlFor="panel-rating">Rating</label>
-          <select
-            id="panel-rating"
-            name="rating"
-            value={formState.rating}
-            onChange={(e) =>
-              setFormState((prev) => ({ ...prev, rating: e.target.value }))
+          <label>Rating</label>
+          <StarRating
+            rating={formState.rating}
+            setRating={(newRating) =>
+              setFormState((prev) => ({ ...prev, rating: newRating }))
             }
-          >
-            {[1, 2, 3, 4, 5].map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
+          />
 
           <label htmlFor="panel-comment">Comment</label>
           <textarea
